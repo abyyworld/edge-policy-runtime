@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edge-policy-runtime"
+version = "0.1.0"
+description = "Edge policy runtime with signed over-the-air updates and a telemetry up-link"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "abyyworld" }]
+keywords = ["robotics", "edge", "jetson", "ota", "telemetry", "mlops", "quantization"]
+
+# The runtime, the OTA client and the telemetry spool are numpy + stdlib. A
+# device that needs a web framework to accept a model update is a device that
+# will not accept a model update in the field.
+dependencies = [
+    "numpy>=1.24",
+    "pydantic>=2.5",
+    "typer>=0.9",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+# Only needed to convert a torch checkpoint into a bundle. Inference does not
+# import torch, and must never require it on the device.
+torch = ["torch>=2.1"]
+dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.3"]
+
+[project.scripts]
+edge-runtime = "edge_runtime.cli:app"
+
+[project.urls]
+Repository = "https://github.com/abyyworld/edge-policy-runtime"
+Downstream = "https://github.com/abyyworld/robot-fleet-loop"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]

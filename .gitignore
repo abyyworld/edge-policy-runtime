@@ -1,0 +1,25 @@
+# Device state: bundles, spools, and the active-version pointer are per-device
+# runtime data, not source.
+/var/
+/releases/
+/reports/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+*.pt
+*.npz
+*.tar.gz
+.DS_Store
+.idea/
+.vscode/

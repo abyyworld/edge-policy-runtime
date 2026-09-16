@@ -38,11 +38,16 @@ jobs:
         python-version: ["3.10", "3.12"]
         include:
           # Anyone cloning this is far more likely to be on a laptop than on
-          # Ubuntu, so macOS and Windows are tested rather than assumed. Both
-          # run the newest supported Python; the version sweep stays on Linux.
+          # Ubuntu, so macOS is tested rather than assumed.
+          #
+          # Windows is deliberately absent. Release activation swaps a symlink
+          # with os.replace so a device that reboots mid-update never comes up
+          # with no policy at all, and that is the right design for the Linux
+          # boards this actually targets. Windows is not a deployment target
+          # for a robot edge runtime, and adding a second activation path for
+          # it would mean maintaining two mechanisms where one is exercised.
+          # Use WSL on Windows.
           - os: macos-latest
-            python-version: "3.12"
-          - os: windows-latest
             python-version: "3.12"
     steps:
       - uses: actions/checkout@v4

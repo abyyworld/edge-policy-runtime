@@ -223,7 +223,15 @@ def health_check(
 
     try:
         policy: Policy = bundle_mod.load_policy(bundle_dir)
+    except OSError as exc:
+        # The host could not read the staged bundle. That is a fault here, not
+        # evidence the release is bad, and returning it as a health verdict
+        # would quarantine a good release for a local problem and leave the
+        # device on its old policy with no indication why. Raise instead.
+        raise OTAError(f"could not read the staged bundle for v{manifest.version}: {exc}") from exc
     except Exception as exc:  # noqa: BLE001
+        # A bundle that is present but unreadable as a policy really is a bad
+        # release, so this one is a health verdict.
         return HealthResult(False, [f"policy failed to load: {type(exc).__name__}: {exc}"])
 
     # The contract check, first, because it is the failure that would otherwise

@@ -28,7 +28,9 @@ py -3.12 -m venv .venv
 .venv\Scripts\edge-runtime demo
 ```
 
-Tested on Linux, macOS and Windows in CI.
+Tested on Linux and macOS in CI. On Windows use WSL: activation swaps a
+symlink so a device rebooting mid-update never comes up with no policy,
+and Windows has no unprivileged equivalent.
 
 Standalone: it takes a trained policy and everything after that is this
 repo's job. The fleet-scale version of both links —  many devices, selective

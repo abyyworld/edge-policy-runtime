@@ -29,7 +29,7 @@ data collection, retraining and canaried releases — is
 ```
 ──────────────── v1 — the factory image ────────────────
 │ device jetson-a1 booted on v1, cohort 49/100
-│ ran 1200 steps, p99 0.09 ms, 5 flagged
+│ ran 1200 steps, p99 0.04 ms, 5 flagged
 ──────── v2 — a real update, adopted over the air ──────
 │ published v2 at 100% rollout
 │ device is now on v2 — 1 update applied in-flight
@@ -38,9 +38,10 @@ data collection, retraining and canaried releases — is
 │ v3 rejected by health gate: observation contract mismatch: this device does
   not publish wrist_force_z
 │ still serving v2, uninterrupted
-│ second poll: v3 is quarantined — no re-download, no update loop
+│ second poll: v3 is quarantined: observation contract mismatch: this device
+  does not publish wrist_force_z — no re-download, no update loop
 ──────────────── what the fleet was told ───────────────
-│ uploaded 29 events over HTTP, 0 still spooled
+│ uploaded 28 events over HTTP, 0 still spooled
 │ flag=12, heartbeat=14, ota=2
 ```
 

@@ -79,7 +79,10 @@ def test_current_is_a_symlink_that_always_points_somewhere(fleet):
 
     assert client.current_link.is_symlink()
     assert (client.current_link / "manifest.json").exists()
-    assert json.loads((client.current_link / "manifest.json").read_text())["version"] == 2
+    assert (
+        json.loads((client.current_link / "manifest.json").read_text(encoding="utf-8"))["version"]
+        == 2
+    )
 
 
 def test_the_previous_bundle_is_kept_not_deleted(fleet):
@@ -118,9 +121,9 @@ def test_a_release_whose_manifest_disagrees_with_the_pointer_is_refused(fleet):
     client, releases, tmp_path = fleet
     publish(make_bundle(tmp_path, 2), releases)
 
-    pointer = json.loads((releases / "stable.json").read_text())
+    pointer = json.loads((releases / "stable.json").read_text(encoding="utf-8"))
     pointer["version"] = 3  # advertise a version the signed manifest does not claim
-    (releases / "stable.json").write_text(json.dumps(pointer))
+    (releases / "stable.json").write_text(json.dumps(pointer), encoding="utf-8")
     (releases / "3.tar.gz").write_bytes((releases / "2.tar.gz").read_bytes())
 
     with pytest.raises((OTAError, BundleError)):
@@ -226,7 +229,10 @@ def test_rollback_returns_to_the_previous_version_and_quarantines_this_one(fleet
     assert client.rollback("success rate collapsed in the field") == 1
     assert client.state.current_version == 1
     assert "collapsed" in client.state.quarantined["2"]
-    assert json.loads((client.current_link / "manifest.json").read_text())["version"] == 1
+    assert (
+        json.loads((client.current_link / "manifest.json").read_text(encoding="utf-8"))["version"]
+        == 1
+    )
 
 
 def test_rollback_with_nothing_to_roll_back_to_is_an_error_not_a_brick(fleet):

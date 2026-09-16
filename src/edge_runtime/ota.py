@@ -152,7 +152,7 @@ class DirectoryReleaseSource:
         pointer = Path(self.root) / f"{channel}.json"
         if not pointer.exists():
             return None
-        return json.loads(pointer.read_text())
+        return json.loads(pointer.read_text(encoding="utf-8"))
 
     def fetch(self, version: int, dest: Path) -> Path:
         src = Path(self.root) / f"{version}.tar.gz"
@@ -317,7 +317,7 @@ class OTAClient:
 
     def _load_state(self, channel: str) -> DeviceState:
         if self.state_path.exists():
-            return DeviceState.model_validate_json(self.state_path.read_text())
+            return DeviceState.model_validate_json(self.state_path.read_text(encoding="utf-8"))
         return DeviceState(device_id=self.device_id, channel=channel)
 
     def _save_state(self) -> None:
@@ -342,7 +342,7 @@ class OTAClient:
         if self.state.current_version == 0:
             return None
         path = self.bundle_dir(self.state.current_version) / "manifest.json"
-        return Manifest.model_validate_json(path.read_text())
+        return Manifest.model_validate_json(path.read_text(encoding="utf-8"))
 
     def status(self) -> dict:
         return {

@@ -44,9 +44,9 @@ def test_modifying_a_file_invalidates_the_bundle(built):
 
 
 def test_modifying_the_manifest_invalidates_the_signature(built):
-    manifest = json.loads((built / "manifest.json").read_text())
+    manifest = json.loads((built / "manifest.json").read_text(encoding="utf-8"))
     manifest["health"]["latency_budget_ms"] = 10_000.0
-    (built / "manifest.json").write_text(json.dumps(manifest))
+    (built / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(BundleError, match="signature verification"):
         bundle_mod.verify(built, key=KEY)
 
@@ -83,10 +83,14 @@ def test_versions_are_immutable_once_built(tmp_path):
 
 
 def test_a_bundle_needing_a_newer_runtime_is_refused(built):
-    manifest = Manifest.model_validate_json((built / "manifest.json").read_text())
+    manifest = Manifest.model_validate_json((built / "manifest.json").read_text(encoding="utf-8"))
     manifest.runtime_min_version = 99
-    (built / "manifest.json").write_text(json.dumps(manifest.model_dump(mode="json")))
-    (built / "manifest.sig").write_text(bundle_mod._sign(manifest.canonical_bytes(), KEY))
+    (built / "manifest.json").write_text(
+        json.dumps(manifest.model_dump(mode="json")), encoding="utf-8"
+    )
+    (built / "manifest.sig").write_text(
+        bundle_mod._sign(manifest.canonical_bytes(), KEY), encoding="utf-8"
+    )
     with pytest.raises(BundleError, match="needs runtime >= v99"):
         bundle_mod.verify(built, key=KEY)
 
@@ -132,7 +136,7 @@ def test_unpack_refuses_a_member_that_escapes_the_directory(tmp_path):
     """
     evil = tmp_path / "evil.tar.gz"
     payload = tmp_path / "payload"
-    payload.write_text("pwned")
+    payload.write_text("pwned", encoding="utf-8")
     with tarfile.open(evil, "w:gz") as tar:
         tar.add(payload, arcname="../../escaped.txt")
 
@@ -156,6 +160,6 @@ def test_write_atomically_leaves_no_partial_file(tmp_path):
     target = tmp_path / "state.json"
     bundle_mod.write_atomically(target, '{"a": 1}')
     bundle_mod.write_atomically(target, '{"a": 2}')
-    assert json.loads(target.read_text()) == {"a": 2}
+    assert json.loads(target.read_text(encoding="utf-8")) == {"a": 2}
     # No temporary files left behind to be mistaken for state later.
     assert [p.name for p in tmp_path.iterdir()] == ["state.json"]

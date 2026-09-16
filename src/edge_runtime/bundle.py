@@ -222,8 +222,12 @@ def build(
         if p.name not in {"manifest.json", "manifest.sig"}
     }
 
-    (out_dir / "manifest.json").write_text(json.dumps(manifest.model_dump(mode="json"), indent=2))
-    (out_dir / "manifest.sig").write_text(_sign(manifest.canonical_bytes(), key or signing_key()))
+    (out_dir / "manifest.json").write_text(
+        json.dumps(manifest.model_dump(mode="json"), indent=2), encoding="utf-8"
+    )
+    (out_dir / "manifest.sig").write_text(
+        _sign(manifest.canonical_bytes(), key or signing_key()), encoding="utf-8"
+    )
     return out_dir
 
 
@@ -239,9 +243,11 @@ def verify(bundle_dir: Path | str, *, key: bytes | None = None) -> Manifest:
     if not manifest_path.exists() or not sig_path.exists():
         raise BundleError(f"{bundle_dir} is not a bundle: manifest or signature missing")
 
-    manifest = Manifest.model_validate_json(manifest_path.read_text())
+    manifest = Manifest.model_validate_json(manifest_path.read_text(encoding="utf-8"))
     if not _verify_signature(
-        manifest.canonical_bytes(), sig_path.read_text().strip(), key or signing_key()
+        manifest.canonical_bytes(),
+        sig_path.read_text(encoding="utf-8").strip(),
+        key or signing_key(),
     ):
         raise BundleError(
             f"bundle v{manifest.version} failed signature verification — "

@@ -34,7 +34,7 @@ class ReleaseStore:
         self._lock = threading.Lock()
         self._seen: set[str] = set()
         if self.telemetry_path.exists():
-            for line in self.telemetry_path.read_text().splitlines():
+            for line in self.telemetry_path.read_text(encoding="utf-8").splitlines():
                 try:
                     self._seen.add(json.loads(line)["event_id"])
                 except (json.JSONDecodeError, KeyError):
@@ -78,7 +78,7 @@ class ReleaseStore:
             return []
         return [
             json.loads(line)
-            for line in self.telemetry_path.read_text().splitlines()
+            for line in self.telemetry_path.read_text(encoding="utf-8").splitlines()
             if line.strip()
         ]
 

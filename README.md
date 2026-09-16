@@ -17,6 +17,19 @@ make quantize    # int8 fidelity, per-tensor vs per-channel, measured
 make test        # 92 tests
 ```
 
+The `make` targets are thin wrappers and assume a Unix shell. macOS needs
+nothing extra. On Windows there is no `make`, so call the same entry points
+directly:
+
+```powershell
+py -3.12 -m venv .venv
+.venv\Scripts\python -m pip install -U pip
+.venv\Scripts\pip install -e ".[dev]"
+.venv\Scripts\edge-runtime demo
+```
+
+Tested on Linux, macOS and Windows in CI.
+
 Standalone: it takes a trained policy and everything after that is this
 repo's job. The fleet-scale version of both links —  many devices, selective
 data collection, retraining and canaried releases — is

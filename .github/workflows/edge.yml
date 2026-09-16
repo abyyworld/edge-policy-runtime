@@ -24,11 +24,26 @@ jobs:
       - run: ruff format --check src tests
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    # Windows runners default to PowerShell, where '.[dev]' is not a quoted
+    # extras spec. bash exists on all three runners, so the steps stay one
+    # script rather than three.
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest]
         python-version: ["3.10", "3.12"]
+        include:
+          # Anyone cloning this is far more likely to be on a laptop than on
+          # Ubuntu, so macOS and Windows are tested rather than assumed. Both
+          # run the newest supported Python; the version sweep stays on Linux.
+          - os: macos-latest
+            python-version: "3.12"
+          - os: windows-latest
+            python-version: "3.12"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

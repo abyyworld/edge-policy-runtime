@@ -1,5 +1,8 @@
 .DEFAULT_GOAL := help
-PY ?= python3.12
+# Prefer 3.12, but fall back to whatever python3 is on PATH. A Mac with
+# Homebrew Python but no python3.12 should not fail on the first command
+# in the README. Override with `make PY=python3.11 install`.
+PY ?= $(shell command -v python3.12 2>/dev/null || command -v python3 2>/dev/null || echo python3)
 VENV := .venv
 BIN := $(VENV)/bin
 RELEASES ?= var/releases

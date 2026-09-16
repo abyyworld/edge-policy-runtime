@@ -220,7 +220,7 @@ class Spool:
     def _load(self) -> None:
         if not self.path.exists():
             return
-        for line in self.path.read_text().splitlines():
+        for line in self.path.read_text(encoding="utf-8").splitlines():
             if not line.strip():
                 continue
             try:

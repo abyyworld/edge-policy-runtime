@@ -1,0 +1,11 @@
+# Line endings are content in this repository.
+#
+# Git for Windows defaults to core.autocrlf=true, which rewrites LF to CRLF on
+# checkout. That changes the bytes of every tracked text file, and several of
+# them are hashed: dvc.lock and the config files end up in lineage records, so
+# the same commit would produce a different hash on Windows than on Linux and
+# the traceability claim would quietly stop holding.
+#
+# Normalise to LF everywhere. Every tracked file here is text, so one rule is
+# enough; add explicit `binary` lines if that ever stops being true.
+* text=auto eol=lf
